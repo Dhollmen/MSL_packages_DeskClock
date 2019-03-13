@@ -31,10 +31,13 @@ import com.android.deskclock.provider.Alarm;
 import com.android.deskclock.provider.AlarmInstance;
 
 public final class AlarmNotifications {
+
+    private final static boolean DEBUG = false;
+
     public static final String EXTRA_NOTIFICATION_ID = "extra_notification_id";
 
     public static void showLowPriorityNotification(Context context, AlarmInstance instance) {
-        LogUtils.v("Displaying low priority notification for alarm instance: " + instance.mId);
+        if (DEBUG) LogUtils.v("Displaying low priority notification for alarm instance: " + instance.mId);
         NotificationManagerCompat nm = NotificationManagerCompat.from(context);
 
         NotificationCompat.Builder notification = new NotificationCompat.Builder(context)
@@ -73,7 +76,7 @@ public final class AlarmNotifications {
     }
 
     public static void showHighPriorityNotification(Context context, AlarmInstance instance) {
-        LogUtils.v("Displaying high priority notification for alarm instance: " + instance.mId);
+        if (DEBUG) LogUtils.v("Displaying high priority notification for alarm instance: " + instance.mId);
         NotificationManagerCompat nm = NotificationManagerCompat.from(context);
 
         NotificationCompat.Builder notification = new NotificationCompat.Builder(context)
@@ -107,7 +110,7 @@ public final class AlarmNotifications {
     }
 
     public static void showSnoozeNotification(Context context, AlarmInstance instance) {
-        LogUtils.v("Displaying snoozed notification for alarm instance: " + instance.mId);
+        if (DEBUG) LogUtils.v("Displaying snoozed notification for alarm instance: " + instance.mId);
         NotificationManagerCompat nm = NotificationManagerCompat.from(context);
 
         NotificationCompat.Builder notification = new NotificationCompat.Builder(context)
@@ -139,7 +142,7 @@ public final class AlarmNotifications {
     }
 
     public static void showMissedNotification(Context context, AlarmInstance instance) {
-        LogUtils.v("Displaying missed notification for alarm instance: " + instance.mId);
+        if (DEBUG) LogUtils.v("Displaying missed notification for alarm instance: " + instance.mId);
         NotificationManagerCompat nm = NotificationManagerCompat.from(context);
 
         String label = instance.mLabel;
@@ -175,7 +178,7 @@ public final class AlarmNotifications {
     }
 
     public static void showAlarmNotification(Context context, AlarmInstance instance) {
-        LogUtils.v("Displaying alarm notification for alarm instance: " + instance.mId);
+        if (DEBUG) LogUtils.v("Displaying alarm notification for alarm instance: " + instance.mId);
         NotificationManagerCompat nm = NotificationManagerCompat.from(context);
 
         Resources resources = context.getResources();
@@ -233,7 +236,7 @@ public final class AlarmNotifications {
     }
 
     public static void clearNotification(Context context, AlarmInstance instance) {
-        LogUtils.v("Clearing notifications for alarm instance: " + instance.mId);
+        if (DEBUG) LogUtils.v("Clearing notifications for alarm instance: " + instance.mId);
         NotificationManagerCompat nm = NotificationManagerCompat.from(context);
         nm.cancel(instance.hashCode());
     }

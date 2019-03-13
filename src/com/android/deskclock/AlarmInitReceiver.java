@@ -29,6 +29,8 @@ import com.android.deskclock.timer.TimerObj;
 
 public class AlarmInitReceiver extends BroadcastReceiver {
 
+    private final static boolean DEBUG = false;
+
     // A flag that indicates that switching the volume button default was done
     private static final String PREF_VOLUME_DEF_DONE = "vol_def_done";
 
@@ -47,7 +49,7 @@ public class AlarmInitReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
         final String action = intent.getAction();
-        LogUtils.v("AlarmInitReceiver " + action);
+        if (DEBUG) LogUtils.v("AlarmInitReceiver " + action);
 
         final PendingResult result = goAsync();
         final WakeLock wl = AlarmAlertWakeLock.createPartialWakeLock(context);
@@ -63,13 +65,13 @@ public class AlarmInitReceiver extends BroadcastReceiver {
                         // Clear stopwatch and timers data
                         final SharedPreferences prefs =
                                 PreferenceManager.getDefaultSharedPreferences(context);
-                        LogUtils.v("AlarmInitReceiver - Reset timers and clear stopwatch data");
+                        if (DEBUG) LogUtils.v("AlarmInitReceiver - Reset timers and clear stopwatch data");
                         TimerObj.resetTimersInSharedPrefs(prefs);
                         Utils.clearSwSharedPref(prefs);
 
                         if (!prefs.getBoolean(PREF_VOLUME_DEF_DONE, false)) {
                             // Fix the default
-                            LogUtils.v("AlarmInitReceiver - resetting volume button default");
+                            if (DEBUG) LogUtils.v("AlarmInitReceiver - resetting volume button default");
                             switchVolumeButtonDefault(prefs);
                         }
                     }
@@ -82,7 +84,7 @@ public class AlarmInitReceiver extends BroadcastReceiver {
                 } finally {
                     result.finish();
                     wl.release();
-                    LogUtils.v("AlarmInitReceiver finished");
+                    if (DEBUG) LogUtils.v("AlarmInitReceiver finished");
                 }
             }
         });

@@ -42,6 +42,8 @@ import java.util.TimeZone;
  */
 public class SettingsActivity extends BaseActivity {
 
+    private final static boolean DEBUG = false;
+
     public static final String KEY_ALARM_SNOOZE = "snooze_duration";
     public static final String KEY_ALARM_VOLUME = "volume_setting";
     public static final String KEY_VOLUME_BEHAVIOR = "volume_button_setting";
@@ -184,7 +186,7 @@ public class SettingsActivity extends BaseActivity {
             int minLength = ids.length;
             if (ids.length != labels.length) {
                 minLength = Math.min(minLength, labels.length);
-                LogUtils.e("Timezone ids and labels have different length!");
+                if (DEBUG) LogUtils.e("Timezone ids and labels have different length!");
             }
             List<TimeZoneRow> timezones = new ArrayList<>();
             for (int i = 0; i < minLength; i++) {

@@ -44,7 +44,8 @@ import java.util.Locale;
 
 public class DigitalAppWidgetProvider extends AppWidgetProvider {
     private static final String TAG = "DigitalAppWidgetProvider";
-
+    private static final boolean DEBUG = false;
+    
     /**
      * Intent to be used for checking if a world clock's date has changed. Must be every fifteen
      * minutes because not all time zones are hour-locked.
@@ -74,8 +75,10 @@ public class DigitalAppWidgetProvider extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        if (DigitalAppWidgetService.LOGGING) {
-            Log.i(TAG, "onReceive: " + action);
+        if (DEBUG) {
+            if (DigitalAppWidgetService.LOGGING) {
+                Log.i(TAG, "onReceive: " + action);
+            }
         }
         super.onReceive(context, intent);
 
@@ -132,8 +135,10 @@ public class DigitalAppWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        if (DigitalAppWidgetService.LOGGING) {
-            Log.i(TAG, "onUpdate");
+        if (DEBUG) {
+            if (DigitalAppWidgetService.LOGGING) {
+                Log.i(TAG, "onUpdate");
+            }
         }
         for (int appWidgetId : appWidgetIds) {
             float ratio = WidgetUtils.getScaleRatio(context, null, appWidgetId);
@@ -218,13 +223,17 @@ public class DigitalAppWidgetProvider extends AppWidgetProvider {
             widget.setTextViewText(R.id.nextAlarm,
                     context.getString(R.string.control_set_alarm_with_existing, nextAlarm));
             widget.setViewVisibility(R.id.nextAlarm, View.VISIBLE);
-            if (DigitalAppWidgetService.LOGGING) {
-                Log.v(TAG, "DigitalWidget sets next alarm string to " + nextAlarm);
+            if (DEBUG) {
+                if (DigitalAppWidgetService.LOGGING) {
+                    Log.v(TAG, "DigitalWidget sets next alarm string to " + nextAlarm);
+                }
             }
         } else  {
             widget.setViewVisibility(R.id.nextAlarm, View.GONE);
-            if (DigitalAppWidgetService.LOGGING) {
-                Log.v(TAG, "DigitalWidget sets next alarm string to null");
+            if (DEBUG) {
+                if (DigitalAppWidgetService.LOGGING) {
+                    Log.v(TAG, "DigitalWidget sets next alarm string to null");
+                }
             }
         }
     }
@@ -246,9 +255,11 @@ public class DigitalAppWidgetProvider extends AppWidgetProvider {
             } else {
                 alarmManager.set(AlarmManager.RTC, onQuarterHour, quarterlyIntent);
             }
-            if (DigitalAppWidgetService.LOGGING) {
-                Log.v(TAG, "startAlarmOnQuarterHour " + context.toString());
-            }
+            if (DEBUG) {
+                if (DigitalAppWidgetService.LOGGING) {
+                    Log.v(TAG, "startAlarmOnQuarterHour " + context.toString());
+                }
+            } 
         }
     }
 
@@ -261,9 +272,11 @@ public class DigitalAppWidgetProvider extends AppWidgetProvider {
     public void cancelAlarmOnQuarterHour(Context context) {
         if (context != null) {
             PendingIntent quarterlyIntent = getOnQuarterHourPendingIntent(context);
-            if (DigitalAppWidgetService.LOGGING) {
-                Log.v(TAG, "cancelAlarmOnQuarterHour " + context.toString());
-            }
+            if (DEBUG) {
+                if (DigitalAppWidgetService.LOGGING) {
+                    Log.v(TAG, "cancelAlarmOnQuarterHour " + context.toString());
+                }
+            } 
             ((AlarmManager) context.getSystemService(Context.ALARM_SERVICE)).cancel(
                     quarterlyIntent);
         }

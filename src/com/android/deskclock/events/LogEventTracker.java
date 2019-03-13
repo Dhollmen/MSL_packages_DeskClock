@@ -23,6 +23,7 @@ import com.android.deskclock.LogUtils;
 public final class LogEventTracker implements EventTracker {
 
     private static final String TAG = "Events";
+    private final static boolean DEBUG = false;
 
     private final Context mContext;
 
@@ -32,7 +33,7 @@ public final class LogEventTracker implements EventTracker {
 
     @Override
     public void sendView(String screenName) {
-        LogUtils.d(TAG, "viewing screen %s", screenName);
+        if (DEBUG) LogUtils.d(TAG, "viewing screen %s", screenName);
     }
 
     @Override
@@ -43,9 +44,9 @@ public final class LogEventTracker implements EventTracker {
     @Override
     public void sendEvent(String category, String action, String label) {
         if (label == null) {
-            LogUtils.d(TAG, "[%s] [%s]", category, action);
+            if (DEBUG) LogUtils.d(TAG, "[%s] [%s]", category, action);
         } else {
-            LogUtils.d(TAG, "[%s] [%s] [%s]", category, action, label);
+            if (DEBUG) LogUtils.d(TAG, "[%s] [%s] [%s]", category, action, label);
         }
     }
 

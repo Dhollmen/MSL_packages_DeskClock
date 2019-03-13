@@ -32,6 +32,8 @@ import java.lang.reflect.Method;
 
 public class AnimatorUtils {
 
+    private final static boolean DEBUG = false;
+
     public static final long ANIM_DURATION_SHORT = 266L;  // 8/30 frames long
 
     public static final Interpolator DECELERATE_ACCELERATE_INTERPOLATOR = new Interpolator() {
@@ -113,7 +115,7 @@ public class AnimatorUtils {
             } catch (NoSuchMethodException | InvocationTargetException
                     | IllegalAccessException e) {
                 // something went wrong, don't try that again
-                LogUtils.e("Unable to use animateValue directly", e);
+                if (DEBUG) LogUtils.e("Unable to use animateValue directly", e);
                 sTryAnimateValue = false;
             }
         }

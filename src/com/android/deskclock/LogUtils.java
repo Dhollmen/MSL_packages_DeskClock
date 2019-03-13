@@ -26,7 +26,7 @@ import android.util.Log;
 public class LogUtils {
 
     public final static String LOGTAG = "AlarmClock";
-    public final static boolean DEBUG = "eng".equals(Build.TYPE) || "userdebug".equals(Build.TYPE);
+    public final static boolean DEBUG = false;   //"eng".equals(Build.TYPE) || "userdebug".equals(Build.TYPE);
 
     public static void v(String message, Object... args) {
         if (DEBUG || Log.isLoggable(LOGTAG, Log.VERBOSE)) {

@@ -84,6 +84,9 @@ import java.util.HashSet;
  */
 public abstract class AlarmClockFragment extends DeskClockFragment implements
         LoaderManager.LoaderCallbacks<Cursor>, View.OnTouchListener {
+
+    private final static boolean DEBUG = false;
+
     private static final float EXPAND_DECELERATION = 1f;
     private static final float COLLAPSE_DECELERATION = 0.7f;
 
@@ -514,7 +517,7 @@ public abstract class AlarmClockFragment extends DeskClockFragment implements
                     saveRingtoneUri(data);
                     break;
                 default:
-                    LogUtils.w("Unhandled request code in onActivityResult: " + requestCode);
+                    if (DEBUG) LogUtils.w("Unhandled request code in onActivityResult: " + requestCode);
             }
         }
     }
@@ -633,7 +636,7 @@ public abstract class AlarmClockFragment extends DeskClockFragment implements
             if (!getCursor().moveToPosition(position)) {
                 // May happen if the last alarm was deleted and the cursor refreshed while the
                 // list is updated.
-                LogUtils.v("couldn't move cursor to position " + position);
+                if (DEBUG) LogUtils.v("couldn't move cursor to position " + position);
                 return null;
             }
             View v;
@@ -1106,7 +1109,7 @@ public abstract class AlarmClockFragment extends DeskClockFragment implements
                     // This is slow because a media player is created during Ringtone object creation.
                     final Ringtone ringTone = RingtoneManager.getRingtone(mContext, uri);
                     if (ringTone == null) {
-                        LogUtils.i("No ringtone for uri %s", uri.toString());
+                        if (DEBUG) LogUtils.i("No ringtone for uri %s", uri.toString());
                         return null;
                     }
                     title = ringTone.getTitle(mContext);

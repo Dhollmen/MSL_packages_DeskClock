@@ -44,6 +44,8 @@ import java.util.Set;
 public class HandleDeskClockApiCalls extends Activity {
     private Context mAppContext;
 
+    private final static boolean DEBUG = false;
+
     private static final String ACTION_PREFIX = "com.android.deskclock.action.";
 
     // shows the tab with world clocks
@@ -122,7 +124,7 @@ public class HandleDeskClockApiCalls extends Activity {
                 .setAction(action)
                 .putExtra(DeskClock.SELECT_TAB_INTENT_EXTRA, DeskClock.STOPWATCH_TAB_INDEX);
         startActivity(stopwatchIntent);
-        LogUtils.i("HandleDeskClockApiCalls " + action);
+        if (DEBUG) LogUtils.i("HandleDeskClockApiCalls " + action);
 
         if (action.equals(ACTION_SHOW_STOPWATCH)) {
             Events.sendStopwatchEvent(R.string.action_show, R.string.label_intent);
@@ -139,12 +141,12 @@ public class HandleDeskClockApiCalls extends Activity {
             if (ACTION_START_STOPWATCH.equals(action)) {
                 final String reason = getString(R.string.stopwatch_already_running);
                 Voice.notifyFailure(this, reason);
-                LogUtils.i(reason);
+                if (DEBUG) LogUtils.i(reason);
                 return;
             } else if (ACTION_RESET_STOPWATCH.equals(action)) { // RESET_STOPWATCH
                 final String reason = getString(R.string.stopwatch_cant_be_reset_because_is_running);
                 Voice.notifyFailure(this, reason);
-                LogUtils.i(reason);
+                if (DEBUG) LogUtils.i(reason);
                 return;
             }
         } else {
@@ -153,7 +155,7 @@ public class HandleDeskClockApiCalls extends Activity {
                     ACTION_LAP_STOPWATCH.equals(action)) {
                 final String reason = getString(R.string.stopwatch_isnt_running);
                 Voice.notifyFailure(this, reason);
-                LogUtils.i(reason);
+                if (DEBUG) LogUtils.i(reason);
                 return;
             }
         }
@@ -183,7 +185,7 @@ public class HandleDeskClockApiCalls extends Activity {
         final Intent intent = new Intent(mAppContext, StopwatchService.class).setAction(action);
         startService(intent);
         Voice.notifySuccess(this, reason);
-        LogUtils.i(reason);
+        if (DEBUG) LogUtils.i(reason);
     }
 
     private void handleTimerIntent(final String action) {
@@ -192,7 +194,7 @@ public class HandleDeskClockApiCalls extends Activity {
                 .putExtra(DeskClock.SELECT_TAB_INTENT_EXTRA, DeskClock.TIMER_TAB_INDEX)
                 .putExtra(TimerFullScreenFragment.GOTO_SETUP_VIEW, false);
         startActivity(timerIntent);
-        LogUtils.i("HandleDeskClockApiCalls " + action);
+        if (DEBUG) LogUtils.i("HandleDeskClockApiCalls " + action);
 
         if (ACTION_SHOW_TIMERS.equals(action)) {
             Events.sendTimerEvent(R.string.action_show, R.string.label_intent);
@@ -234,7 +236,7 @@ public class HandleDeskClockApiCalls extends Activity {
             TimerObj.getTimersFromSharedPrefs(prefs, timers);
             if (timers.isEmpty()) {
                 final String reason = mContext.getString(R.string.no_timer_set);
-                LogUtils.i(reason);
+                if (DEBUG) LogUtils.i(reason);
                 Voice.notifyFailure(mActivity, reason);
                 return null;
             }
@@ -246,7 +248,7 @@ public class HandleDeskClockApiCalls extends Activity {
                     // Delete a timer only if there's one available
                     if (timers.size() > 1) {
                         final String reason = mContext.getString(R.string.multiple_timers_available);
-                        LogUtils.i(reason);
+                        if (DEBUG) LogUtils.i(reason);
                         Voice.notifyFailure(mActivity, reason);
                         return null;
                     }
@@ -256,7 +258,7 @@ public class HandleDeskClockApiCalls extends Activity {
                     Events.sendTimerEvent(R.string.action_delete, R.string.label_intent);
                     final String reason = mContext.getString(R.string.timer_deleted);
                     Voice.notifySuccess(mActivity, reason);
-                    LogUtils.i(reason);
+                    if (DEBUG) LogUtils.i(reason);
                     break;
                 }
                 case ACTION_START_TIMER: {
@@ -272,7 +274,7 @@ public class HandleDeskClockApiCalls extends Activity {
                     timer.writeToSharedPref(prefs);
                     final String reason = mContext.getString(R.string.timer_started);
                     Voice.notifySuccess(mActivity, reason);
-                    LogUtils.i(reason);
+                    if (DEBUG) LogUtils.i(reason);
                     Events.sendTimerEvent(R.string.action_start, R.string.label_intent);
                     break;
                 }
@@ -288,7 +290,7 @@ public class HandleDeskClockApiCalls extends Activity {
                     }
                     final String reason = mContext.getString(R.string.timer_was_reset);
                     Voice.notifySuccess(mActivity, reason);
-                    LogUtils.i(reason);
+                    if (DEBUG) LogUtils.i(reason);
                     timer.setState(TimerObj.STATE_RESTART);
                     timer.mTimeLeft = timer.mSetupLength;
                     timer.writeToSharedPref(prefs);
@@ -306,7 +308,7 @@ public class HandleDeskClockApiCalls extends Activity {
                         return null;
                     }
                     final String reason = mContext.getString(R.string.timer_stopped);
-                    LogUtils.i(reason);
+                    if (DEBUG) LogUtils.i(reason);
                     Voice.notifySuccess(mActivity, reason);
                     if (timer.mState == TimerObj.STATE_RUNNING) {
                         timer.setState(TimerObj.STATE_STOPPED);
@@ -350,7 +352,7 @@ public class HandleDeskClockApiCalls extends Activity {
                     } else {
                         // soleTimer has already been set
                         final String reason = mContext.getString(R.string.multiple_timers_available);
-                        LogUtils.i(reason);
+                        if (DEBUG) LogUtils.i(reason);
                         Voice.notifyFailure(mActivity, reason);
                         return null;
                     }
@@ -377,7 +379,7 @@ public class HandleDeskClockApiCalls extends Activity {
                         // soleTimer has already been set
                         final String reason = mContext.getString(
                                 R.string.multiple_timers_available);
-                        LogUtils.i(reason);
+                        if (DEBUG) LogUtils.i(reason);
                         Voice.notifyFailure(mActivity, reason);
                         return null;
                     }
@@ -390,12 +392,12 @@ public class HandleDeskClockApiCalls extends Activity {
                     // all timers are running
                     final String reason = mContext.getString(
                             R.string.timer_cant_be_reset_because_its_running);
-                    LogUtils.i(reason);
+                    if (DEBUG) LogUtils.i(reason);
                     Voice.notifyFailure(mActivity, reason);
                 } else if (action.equals(ACTION_STOP_TIMER)) {
                     // no running timers
                     final String reason = mContext.getString(R.string.timer_already_stopped);
-                    LogUtils.i(reason);
+                    if (DEBUG) LogUtils.i(reason);
                     Voice.notifyFailure(mActivity, reason);
                 }
             }
@@ -425,7 +427,7 @@ public class HandleDeskClockApiCalls extends Activity {
                     if (cityExtra == null) {
                         final String reason = mContext.getString(R.string.no_city_selected);
                         Voice.notifyFailure(mActivity, reason);
-                        LogUtils.i(reason);
+                        if (DEBUG) LogUtils.i(reason);
                         startCitiesActivity();
                         Events.sendClockEvent(R.string.action_create, R.string.label_intent);
                         break;
@@ -439,7 +441,7 @@ public class HandleDeskClockApiCalls extends Activity {
                         final String reason = mContext.getString(
                                 R.string.the_city_you_specified_is_not_available);
                         Voice.notifyFailure(mActivity, reason);
-                        LogUtils.i(reason);
+                        if (DEBUG) LogUtils.i(reason);
                         break;
                     }
 
@@ -449,14 +451,14 @@ public class HandleDeskClockApiCalls extends Activity {
                     if (selectedCities.put(city.mCityId, city) != null) {
                         final String reason = mContext.getString(R.string.the_city_already_added);
                         Voice.notifyFailure(mActivity, reason);
-                        LogUtils.i(reason);
+                        if (DEBUG) LogUtils.i(reason);
                         break;
                     }
 
                     Cities.saveCitiesToSharedPrefs(prefs, selectedCities);
                     final String reason = mContext.getString(R.string.city_added, city.mCityName);
                     Voice.notifySuccess(mActivity, reason);
-                    LogUtils.i(reason);
+                    if (DEBUG) LogUtils.i(reason);
                     Events.sendClockEvent(R.string.action_start, R.string.label_intent);
                     break;
                 }
@@ -465,7 +467,7 @@ public class HandleDeskClockApiCalls extends Activity {
                         // if a city isn't specified open CitiesActivity to choose a city
                         final String reason = mContext.getString(R.string.no_city_selected);
                         Voice.notifyFailure(mActivity, reason);
-                        LogUtils.i(reason);
+                        if (DEBUG) LogUtils.i(reason);
                         startCitiesActivity();
                         Events.sendClockEvent(R.string.action_create, R.string.label_intent);
                         break;
@@ -479,7 +481,7 @@ public class HandleDeskClockApiCalls extends Activity {
                         final String reason = mContext.getString(
                                 R.string.the_city_you_specified_is_not_available);
                         Voice.notifyFailure(mActivity, reason);
-                        LogUtils.i(reason);
+                        if (DEBUG) LogUtils.i(reason);
                         break;
                     }
 
@@ -489,7 +491,7 @@ public class HandleDeskClockApiCalls extends Activity {
                         final String reason = mContext.getString(R.string.city_deleted,
                                 city.mCityName);
                         Voice.notifySuccess(mActivity, reason);
-                        LogUtils.i(reason);
+                        if (DEBUG) LogUtils.i(reason);
                         Cities.saveCitiesToSharedPrefs(prefs, selectedCities);
                         Events.sendClockEvent(R.string.action_delete, R.string.label_intent);
                     } else {

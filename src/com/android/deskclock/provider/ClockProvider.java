@@ -29,6 +29,9 @@ import android.text.TextUtils;
 import com.android.deskclock.LogUtils;
 
 public class ClockProvider extends ContentProvider {
+
+    private final static boolean DEBUG = false;
+
     private ClockDatabaseHelper mOpenHelper;
 
     private static final int ALARMS = 1;
@@ -98,7 +101,7 @@ public class ClockProvider extends ContentProvider {
                               null, null, sort);
 
         if (ret == null) {
-            LogUtils.e("Alarms.query: failed");
+            if (DEBUG) LogUtils.e("Alarms.query: failed");
         } else {
             ret.setNotificationUri(getContext().getContentResolver(), uri);
         }
@@ -156,7 +159,7 @@ public class ClockProvider extends ContentProvider {
                         "Cannot update URL: " + uri);
             }
         }
-        LogUtils.v("*** notifyChange() id: " + alarmId + " url " + uri);
+        if (DEBUG) LogUtils.v("*** notifyChange() id: " + alarmId + " url " + uri);
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
     }

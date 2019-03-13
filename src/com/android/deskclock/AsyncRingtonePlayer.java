@@ -42,6 +42,7 @@ import java.lang.reflect.Method;
 public class AsyncRingtonePlayer {
 
     private static final String TAG = "AsyncRingtonePlayer";
+    private final static boolean DEBUG = false;
 
     // Volume suggested by media team for in-call alarms.
     private static final float IN_CALL_VOLUME = 0.125f;
@@ -66,13 +67,13 @@ public class AsyncRingtonePlayer {
 
     /** Plays the ringtone. */
     public void play(Uri ringtoneUri) {
-        LogUtils.d(TAG, "Posting play.");
+        if (DEBUG) LogUtils.d(TAG, "Posting play.");
         postMessage(EVENT_PLAY, ringtoneUri);
     }
 
     /** Stops playing the ringtone. */
     public void stop() {
-        LogUtils.d(TAG, "Posting stop.");
+        if (DEBUG) LogUtils.d(TAG, "Posting stop.");
         postMessage(EVENT_STOP, null);
     }
 
@@ -190,10 +191,10 @@ public class AsyncRingtonePlayer {
         @Override
         public void play(final Context context, Uri ringtoneUri) {
             if (Looper.getMainLooper() == Looper.myLooper()) {
-                LogUtils.e(TAG, "Must not be on the main thread!", new IllegalStateException());
+                if (DEBUG) LogUtils.e(TAG, "Must not be on the main thread!", new IllegalStateException());
             }
 
-            LogUtils.i(TAG, "Play ringtone via android.media.MediaPlayer.");
+            if (DEBUG) LogUtils.i(TAG, "Play ringtone via android.media.MediaPlayer.");
 
             if (mAudioManager == null) {
                 mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
@@ -203,14 +204,14 @@ public class AsyncRingtonePlayer {
             // Fall back to the default alarm if the database does not have an alarm stored.
             if (alarmNoise == null) {
                 alarmNoise = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-                LogUtils.v("Using default alarm: " + alarmNoise.toString());
+                if (DEBUG) LogUtils.v("Using default alarm: " + alarmNoise.toString());
             }
 
             mMediaPlayer = new MediaPlayer();
             mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 @Override
                 public boolean onError(MediaPlayer mp, int what, int extra) {
-                    LogUtils.e("Error occurred while playing audio. Stopping AlarmKlaxon.");
+                    if (DEBUG) LogUtils.e("Error occurred while playing audio. Stopping AlarmKlaxon.");
                     stop(context);
                     return true;
                 }
@@ -220,7 +221,7 @@ public class AsyncRingtonePlayer {
                 // Check if we are in a call. If we are, use the in-call alarm resource at a
                 // low volume to not disrupt the call.
                 if (isInTelephoneCall(context)) {
-                    LogUtils.v("Using the in-call alarm");
+                    if (DEBUG) LogUtils.v("Using the in-call alarm");
                     mMediaPlayer.setVolume(IN_CALL_VOLUME, IN_CALL_VOLUME);
                     alarmNoise = getInCallRingtoneUri(context);
                 }
@@ -232,7 +233,7 @@ public class AsyncRingtonePlayer {
 
                 startAlarm(mMediaPlayer);
             } catch (Throwable t) {
-                LogUtils.e("Use the fallback ringtone, original was " + alarmNoise, t);
+                if (DEBUG) LogUtils.e("Use the fallback ringtone, original was " + alarmNoise, t);
                 // The alarmNoise may be on the sd card which could be busy right now.
                 // Use the fallback ringtone.
                 try {
@@ -242,7 +243,7 @@ public class AsyncRingtonePlayer {
                     startAlarm(mMediaPlayer);
                 } catch (Throwable t2) {
                     // At this point we just don't play anything.
-                    LogUtils.e("Failed to play fallback ringtone", t2);
+                    if (DEBUG) LogUtils.e("Failed to play fallback ringtone", t2);
                 }
             }
         }
@@ -275,10 +276,10 @@ public class AsyncRingtonePlayer {
         @Override
         public void stop(Context context) {
             if (Looper.getMainLooper() == Looper.myLooper()) {
-                LogUtils.e(TAG, "Must not be on the main thread!", new IllegalStateException());
+                if (DEBUG) LogUtils.e(TAG, "Must not be on the main thread!", new IllegalStateException());
             }
 
-            LogUtils.i(TAG, "Stop ringtone via android.media.MediaPlayer.");
+            if (DEBUG) LogUtils.i(TAG, "Stop ringtone via android.media.MediaPlayer.");
 
             // Stop audio playing
             if (mMediaPlayer != null) {
@@ -311,13 +312,13 @@ public class AsyncRingtonePlayer {
             try {
                 mSetVolumeMethod = Ringtone.class.getDeclaredMethod("setVolume", float.class);
             } catch (NoSuchMethodException nsme) {
-                LogUtils.e(TAG, "Unable to locate method: Ringtone.setVolume(float).", nsme);
+                if (DEBUG) LogUtils.e(TAG, "Unable to locate method: Ringtone.setVolume(float).", nsme);
             }
 
             try {
                 mSetLoopingMethod = Ringtone.class.getDeclaredMethod("setLooping", boolean.class);
             } catch (NoSuchMethodException nsme) {
-                LogUtils.e(TAG, "Unable to locate method: Ringtone.setLooping(boolean).", nsme);
+                if (DEBUG) LogUtils.e(TAG, "Unable to locate method: Ringtone.setLooping(boolean).", nsme);
             }
         }
 
@@ -327,10 +328,10 @@ public class AsyncRingtonePlayer {
         @Override
         public void play(Context context, Uri ringtoneUri) {
             if (Looper.getMainLooper() == Looper.myLooper()) {
-                LogUtils.e(TAG, "Must not be on the main thread!", new IllegalStateException());
+                if (DEBUG) LogUtils.e(TAG, "Must not be on the main thread!", new IllegalStateException());
             }
 
-            LogUtils.i(TAG, "Play ringtone via android.media.Ringtone.");
+            if (DEBUG) LogUtils.i(TAG, "Play ringtone via android.media.Ringtone.");
 
             if (mAudioManager == null) {
                 mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
@@ -348,7 +349,7 @@ public class AsyncRingtonePlayer {
             try {
                 mSetLoopingMethod.invoke(mRingtone, true);
             } catch (Exception e) {
-                LogUtils.e(TAG, "Unable to turn looping on for android.media.Ringtone", e);
+                if (DEBUG) LogUtils.e(TAG, "Unable to turn looping on for android.media.Ringtone", e);
 
                 // Fall back to the default ringtone if looping could not be enabled.
                 // (Default alarm ringtone most likely has looping tags set within the .ogg file)
@@ -363,7 +364,7 @@ public class AsyncRingtonePlayer {
 
             // if we don't have a ringtone at this point there isn't much recourse
             if (mRingtone == null) {
-                LogUtils.i(TAG, "Unable to locate alarm ringtone.");
+                if (DEBUG) LogUtils.i(TAG, "Unable to locate alarm ringtone.");
                 return;
             }
 
@@ -376,11 +377,11 @@ public class AsyncRingtonePlayer {
 
             // Attempt to adjust the ringtone volume if the user is in a telephone call.
             if (inTelephoneCall) {
-                LogUtils.v("Using the in-call alarm");
+                if (DEBUG) LogUtils.v("Using the in-call alarm");
                 try {
                     mSetVolumeMethod.invoke(mRingtone, IN_CALL_VOLUME);
                 } catch (Exception e) {
-                    LogUtils.e(TAG, "Unable to set in-call volume for android.media.Ringtone", e);
+                    if (DEBUG) LogUtils.e(TAG, "Unable to set in-call volume for android.media.Ringtone", e);
                 }
             }
 
@@ -395,13 +396,13 @@ public class AsyncRingtonePlayer {
         @Override
         public void stop(Context context) {
             if (Looper.getMainLooper() == Looper.myLooper()) {
-                LogUtils.e(TAG, "Must not be on the main thread!", new IllegalStateException());
+                if (DEBUG) LogUtils.e(TAG, "Must not be on the main thread!", new IllegalStateException());
             }
 
-            LogUtils.i(TAG, "Stop ringtone via android.media.Ringtone.");
+            if (DEBUG) LogUtils.i(TAG, "Stop ringtone via android.media.Ringtone.");
 
             if (mRingtone != null && mRingtone.isPlaying()) {
-                LogUtils.d(TAG, "Ringtone.stop() invoked.");
+                if (DEBUG) LogUtils.d(TAG, "Ringtone.stop() invoked.");
                 mRingtone.stop();
             }
 

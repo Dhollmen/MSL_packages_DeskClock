@@ -111,6 +111,8 @@ public class StaggeredGridView extends ViewGroup {
 
     private GridAdapter mAdapter;
 
+    private static final boolean DEBUG = false;
+
     public static final int COLUMN_COUNT_AUTO = -1;
 
     /**
@@ -677,7 +679,8 @@ public class StaggeredGridView extends ViewGroup {
             try {
                 bitmap = cache.copy(Bitmap.Config.ARGB_8888, false);
             } catch (final OutOfMemoryError e) {
-                Log.w(TAG, "Failed to copy bitmap from Drawing cache", e);
+                if (DEBUG)
+                    Log.w(TAG, "Failed to copy bitmap from Drawing cache", e);
                 bitmap = null;
             }
         }
@@ -921,9 +924,10 @@ public class StaggeredGridView extends ViewGroup {
             case MotionEvent.ACTION_MOVE: {
                 final int index = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
                 if (index < 0) {
-                    Log.e(TAG, "onInterceptTouchEvent could not find pointer with id " +
-                            mActivePointerId + " - did StaggeredGridView receive an inconsistent " +
-                            "event stream?");
+                    if (DEBUG)
+                        Log.e(TAG, "onInterceptTouchEvent could not find pointer with id " +
+                                mActivePointerId + " - did StaggeredGridView receive an inconsistent " +
+                                "event stream?");
                     return false;
                 }
                 final float y = MotionEventCompat.getY(ev, index);
@@ -958,9 +962,10 @@ public class StaggeredGridView extends ViewGroup {
             case MotionEvent.ACTION_MOVE: {
                 final int index = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
                 if (index < 0) {
-                    Log.e(TAG, "onInterceptTouchEvent could not find pointer with id " +
-                            mActivePointerId + " - did StaggeredGridView receive an inconsistent " +
-                            "event stream?");
+                    if (DEBUG)
+                        Log.e(TAG, "onInterceptTouchEvent could not find pointer with id " +
+                                mActivePointerId + " - did StaggeredGridView receive an inconsistent " +
+                                "event stream?");
                     return false;
                 }
 
@@ -1533,12 +1538,12 @@ public class StaggeredGridView extends ViewGroup {
         final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
         if (widthMode != MeasureSpec.EXACTLY) {
-            Log.d(TAG, "onMeasure: must have an exact width or match_parent! " +
+            if (DEBUG) Log.d(TAG, "onMeasure: must have an exact width or match_parent! " +
                     "Using fallback spec of EXACTLY " + widthSize);
             widthMode = MeasureSpec.EXACTLY;
         }
         if (heightMode != MeasureSpec.EXACTLY) {
-            Log.d(TAG, "onMeasure: must have an exact height or match_parent! " +
+            if (DEBUG) Log.d(TAG, "onMeasure: must have an exact height or match_parent! " +
                     "Using fallback spec of EXACTLY " + heightSize);
             heightMode = MeasureSpec.EXACTLY;
         }
@@ -1740,7 +1745,7 @@ public class StaggeredGridView extends ViewGroup {
                 }
             });
 
-            Log.v(TAG, "starting");
+            if (DEBUG) Log.v(TAG, "starting");
             animatorSet.start();
         } else {
             resetAnimationMode();
@@ -2180,11 +2185,12 @@ public class StaggeredGridView extends ViewGroup {
             for (int spanIndex = 0; spanIndex < rec.span; spanIndex++) {
                 final int col = mIsRtlLayout ? nextColumn - spanIndex : nextColumn + spanIndex;
                 mItemBottoms[col] = lowest + rec.height;
-
-                if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                    Log.v(TAG, " position: " + i + " bottoms: ");
-                    for (int j = 0; j < mColCount; j++) {
-                        Log.v(TAG, "    mItemBottoms["+j+"]: " + mItemBottoms[j]);
+                if (DEBUG) {
+                    if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                        Log.v(TAG, " position: " + i + " bottoms: ");
+                        for (int j = 0; j < mColCount; j++) {
+                            Log.v(TAG, "    mItemBottoms["+j+"]: " + mItemBottoms[j]);
+                        }
                     }
                 }
             }
@@ -2627,10 +2633,11 @@ public class StaggeredGridView extends ViewGroup {
             }
             child.layout(childLeft, childTop, childRight, childBottom);
 
-            Log.v(TAG, "[fillUp] position: " + position + " id: " + lp.id
-                    + " childLeft: " + childLeft + " childTop: " + childTop
-                    + " column: " + rec.column + " childHeight:" + childHeight);
-
+            if (DEBUG) {
+                Log.v(TAG, "[fillUp] position: " + position + " id: " + lp.id
+                        + " childLeft: " + childLeft + " childTop: " + childTop
+                        + " column: " + rec.column + " childHeight:" + childHeight);
+            }
             // Since we're filling up, once the child is laid out, update mItemTops again
             // to reflect the next available top value at this column.  This is simply the child's
             // top coordinates, minus any available margins set.  For LTR, we start at the column
@@ -2771,10 +2778,11 @@ public class StaggeredGridView extends ViewGroup {
                 childRight = childLeft + child.getMeasuredWidth();
             }
 
-            Log.v(TAG, "[fillDown] position: " + position + " id: " + lp.id
-                    + " childLeft: " + childLeft + " childTop: " + childTop
-                    + " column: " + rec.column + " childHeight:" + childHeight);
-
+            if (DEBUG) {
+                Log.v(TAG, "[fillDown] position: " + position + " id: " + lp.id
+                        + " childLeft: " + childLeft + " childTop: " + childTop
+                        + " column: " + rec.column + " childHeight:" + childHeight);
+            }
             child.layout(childLeft, childTop, childRight, childBottom);
 
             // Once we've laid down the child, update mItemBottoms again to reflect the next
@@ -3264,7 +3272,7 @@ public class StaggeredGridView extends ViewGroup {
             return;
         }
 
-        Log.v(TAG, "[restoreScrollPosition] " + scrollState);
+        if (DEBUG) Log.v(TAG, "[restoreScrollPosition] " + scrollState);
 
         int targetPosition = 0;
         long itemId = -1;
@@ -3709,8 +3717,9 @@ public class StaggeredGridView extends ViewGroup {
             super(MATCH_PARENT, height);
 
             if (this.height == MATCH_PARENT) {
-                Log.w(TAG, "Constructing LayoutParams with height FILL_PARENT - " +
-                        "impossible! Falling back to WRAP_CONTENT");
+                if (DEBUG)
+                    Log.w(TAG, "Constructing LayoutParams with height FILL_PARENT - " +
+                            "impossible! Falling back to WRAP_CONTENT");
                 this.height = WRAP_CONTENT;
             }
         }
@@ -3719,13 +3728,15 @@ public class StaggeredGridView extends ViewGroup {
             super(c, attrs);
 
             if (this.width != MATCH_PARENT) {
-                Log.w(TAG, "Inflation setting LayoutParams width to " + this.width +
-                        " - must be MATCH_PARENT");
+                if (DEBUG)
+                    Log.w(TAG, "Inflation setting LayoutParams width to " + this.width +
+                            " - must be MATCH_PARENT");
                 this.width = MATCH_PARENT;
             }
             if (this.height == MATCH_PARENT) {
-                Log.w(TAG, "Inflation setting LayoutParams height to MATCH_PARENT - " +
-                        "impossible! Falling back to WRAP_CONTENT");
+                if (DEBUG)
+                    Log.w(TAG, "Inflation setting LayoutParams height to MATCH_PARENT - " +
+                            "impossible! Falling back to WRAP_CONTENT");
                 this.height = WRAP_CONTENT;
             }
 
@@ -3738,13 +3749,15 @@ public class StaggeredGridView extends ViewGroup {
             super(other);
 
             if (this.width != MATCH_PARENT) {
-                Log.w(TAG, "Constructing LayoutParams with width " + this.width +
-                        " - must be MATCH_PARENT");
+                if (DEBUG)
+                    Log.w(TAG, "Constructing LayoutParams with width " + this.width +
+                            " - must be MATCH_PARENT");
                 this.width = MATCH_PARENT;
             }
             if (this.height == MATCH_PARENT) {
-                Log.w(TAG, "Constructing LayoutParams with height MATCH_PARENT - " +
-                        "impossible! Falling back to WRAP_CONTENT");
+                if (DEBUG)
+                    Log.w(TAG, "Constructing LayoutParams with height MATCH_PARENT - " +
+                            "impossible! Falling back to WRAP_CONTENT");
                 this.height = WRAP_CONTENT;
             }
         }

@@ -40,6 +40,9 @@ import com.android.deskclock.provider.AlarmInstance;
  * exits early if AlarmActivity is bound to prevent double-processing of the snooze/dismiss intents.
  */
 public class AlarmService extends Service {
+
+    private final static boolean DEBUG = false;
+
     /**
      * AlarmActivity and AlarmService (when unbound) listen for this broadcast intent
      * so that other applications can snooze the alarm (after ALARM_ALERT_ACTION and before
@@ -136,7 +139,7 @@ public class AlarmService extends Service {
     };
 
     private void startAlarm(AlarmInstance instance) {
-        LogUtils.v("AlarmService.start with instance: " + instance.mId);
+        if (DEBUG) LogUtils.v("AlarmService.start with instance: " + instance.mId);
         if (mCurrentAlarm != null) {
             AlarmStateManager.setMissedState(this, mCurrentAlarm);
             stopCurrentAlarm();
@@ -158,11 +161,11 @@ public class AlarmService extends Service {
 
     private void stopCurrentAlarm() {
         if (mCurrentAlarm == null) {
-            LogUtils.v("There is no current alarm to stop");
+            if (DEBUG) LogUtils.v("There is no current alarm to stop");
             return;
         }
 
-        LogUtils.v("AlarmService.stop with instance: %s", (Object) mCurrentAlarm.mId);
+        if (DEBUG) LogUtils.v("AlarmService.stop with instance: %s", (Object) mCurrentAlarm.mId);
         AlarmKlaxon.stop(this);
         mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
         sendBroadcast(new Intent(ALARM_DONE_ACTION));
@@ -175,14 +178,14 @@ public class AlarmService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-            LogUtils.i("AlarmService received intent %s", action);
+            if (DEBUG) LogUtils.i("AlarmService received intent %s", action);
             if (mCurrentAlarm == null || mCurrentAlarm.mAlarmState != AlarmInstance.FIRED_STATE) {
-                LogUtils.i("No valid firing alarm");
+                if (DEBUG) LogUtils.i("No valid firing alarm");
                 return;
             }
 
             if (mIsBound) {
-                LogUtils.i("AlarmActivity bound; AlarmService no-op");
+                if (DEBUG) LogUtils.i("AlarmActivity bound; AlarmService no-op");
                 return;
             }
 
@@ -217,7 +220,7 @@ public class AlarmService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        LogUtils.v("AlarmService.onStartCommand() with %s", intent);
+        if (DEBUG) LogUtils.v("AlarmService.onStartCommand() with %s", intent);
 
         final long instanceId = AlarmInstance.getId(intent.getData());
         switch (intent.getAction()) {
@@ -225,7 +228,7 @@ public class AlarmService extends Service {
                 final ContentResolver cr = this.getContentResolver();
                 final AlarmInstance instance = AlarmInstance.getInstance(cr, instanceId);
                 if (instance == null) {
-                    LogUtils.e("No instance found to start alarm: %d", instanceId);
+                    if (DEBUG) LogUtils.e("No instance found to start alarm: %d", instanceId);
                     if (mCurrentAlarm != null) {
                         // Only release lock if we are not firing alarm
                         AlarmAlertWakeLock.releaseCpuLock();
@@ -234,14 +237,14 @@ public class AlarmService extends Service {
                 }
 
                 if (mCurrentAlarm != null && mCurrentAlarm.mId == instanceId) {
-                    LogUtils.e("Alarm already started for instance: %d", instanceId);
+                    if (DEBUG) LogUtils.e("Alarm already started for instance: %d", instanceId);
                     break;
                 }
                 startAlarm(instance);
                 break;
             case STOP_ALARM_ACTION:
                 if (mCurrentAlarm != null && mCurrentAlarm.mId != instanceId) {
-                    LogUtils.e("Can't stop alarm for instance: %d because current alarm is: %d",
+                    if (DEBUG) LogUtils.e("Can't stop alarm for instance: %d because current alarm is: %d",
                             instanceId, mCurrentAlarm.mId);
                     break;
                 }
@@ -254,7 +257,7 @@ public class AlarmService extends Service {
 
     @Override
     public void onDestroy() {
-        LogUtils.v("AlarmService.onDestroy() called");
+        if (DEBUG) LogUtils.v("AlarmService.onDestroy() called");
         super.onDestroy();
         if (mCurrentAlarm != null) {
             stopCurrentAlarm();

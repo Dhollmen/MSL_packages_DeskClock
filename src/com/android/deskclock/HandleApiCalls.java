@@ -48,6 +48,8 @@ import java.util.List;
 
 public class HandleApiCalls extends Activity {
 
+    private final static boolean DEBUG = false;
+
     public static final long TIMER_MIN_LENGTH = 1000;
     public static final long TIMER_MAX_LENGTH = 24 * 60 * 60 * 1000;
 
@@ -109,7 +111,7 @@ public class HandleApiCalls extends Activity {
         if (alarmInstance == null) {
             final String reason = context.getString(R.string.no_alarm_scheduled_for_this_time);
             Voice.notifyFailure(activity, reason);
-            LogUtils.i(reason);
+            if (DEBUG) LogUtils.i(reason);
             return;
         }
 
@@ -118,14 +120,14 @@ public class HandleApiCalls extends Activity {
         if (Utils.isAlarmWithin24Hours(alarmInstance)) {
             AlarmStateManager.setPreDismissState(context, alarmInstance);
             final String reason = context.getString(R.string.alarm_is_dismissed, time);
-            LogUtils.i(reason);
+            if (DEBUG) LogUtils.i(reason);
             Voice.notifySuccess(activity, reason);
             Events.sendAlarmEvent(R.string.action_dismiss, R.string.label_intent);
         } else {
             final String reason = context.getString(
                     R.string.alarm_cant_be_dismissed_still_more_than_24_hours_away, time);
             Voice.notifyFailure(activity, reason);
-            LogUtils.i(reason);
+            if (DEBUG) LogUtils.i(reason);
         }
     }
 
@@ -146,7 +148,7 @@ public class HandleApiCalls extends Activity {
             final List<Alarm> alarms = getEnabledAlarms(mContext);
             if (alarms.isEmpty()) {
                 final String reason = mContext.getString(R.string.no_scheduled_alarms);
-                LogUtils.i(reason);
+                if (DEBUG) LogUtils.i(reason);
                 Voice.notifyFailure(mActivity, reason);
                 return null;
             }
@@ -195,7 +197,7 @@ public class HandleApiCalls extends Activity {
             // Apply the action to the matching alarms
             for (Alarm alarm : matchingAlarms) {
                 dismissAlarm(alarm, mContext, mActivity);
-                LogUtils.i("Alarm %s is dismissed", alarm);
+                if (DEBUG) LogUtils.i("Alarm %s is dismissed", alarm);
             }
             return null;
         }
@@ -227,7 +229,7 @@ public class HandleApiCalls extends Activity {
                     mContext.getContentResolver(), AlarmInstance.FIRED_STATE);
             if (alarmInstances.isEmpty()) {
                 final String reason = mContext.getString(R.string.no_firing_alarms);
-                LogUtils.i(reason);
+                if (DEBUG) LogUtils.i(reason);
                 Voice.notifyFailure(mActivity, reason);
                 return null;
             }
@@ -248,10 +250,10 @@ public class HandleApiCalls extends Activity {
         final String time = DateFormat.getTimeFormat(context).format(
                 alarmInstance.getAlarmTime().getTime());
         final String reason = context.getString(R.string.alarm_is_snoozed, time);
-        LogUtils.i(reason);
+        if (DEBUG) LogUtils.i(reason);
         Voice.notifySuccess(activity, reason);
         AlarmStateManager.setSnoozeState(context, alarmInstance, true);
-        LogUtils.i("Snooze %d:%d", alarmInstance.mHour, alarmInstance.mMinute);
+        if (DEBUG) LogUtils.i("Snooze %d:%d", alarmInstance.mHour, alarmInstance.mMinute);
         Events.sendAlarmEvent(R.string.action_snooze, R.string.label_intent);
     }
 
@@ -278,7 +280,7 @@ public class HandleApiCalls extends Activity {
             createAlarm.putExtra(DeskClock.SELECT_TAB_INTENT_EXTRA, DeskClock.ALARM_TAB_INDEX);
             startActivity(createAlarm);
             Voice.notifyFailure(this, getString(R.string.invalid_time, hour, minutes, " "));
-            LogUtils.i("HandleApiCalls no/invalid time; opening UI");
+            if (DEBUG) LogUtils.i("HandleApiCalls no/invalid time; opening UI");
             return;
         }
 
@@ -316,14 +318,14 @@ public class HandleApiCalls extends Activity {
         final String time = DateFormat.getTimeFormat(mAppContext).format(
                 alarmInstance.getAlarmTime().getTime());
         Voice.notifySuccess(this, getString(R.string.alarm_is_set, time));
-        LogUtils.i("HandleApiCalls set up alarm: %s", alarm);
+        if (DEBUG) LogUtils.i("HandleApiCalls set up alarm: %s", alarm);
     }
 
     private void handleShowAlarms() {
         startActivity(new Intent(this, DeskClock.class)
                 .putExtra(DeskClock.SELECT_TAB_INTENT_EXTRA, DeskClock.ALARM_TAB_INDEX));
         Events.sendAlarmEvent(R.string.action_show, R.string.label_intent);
-        LogUtils.i("HandleApiCalls show alarms");
+        if (DEBUG) LogUtils.i("HandleApiCalls show alarms");
     }
 
     private void handleSetTimer(Intent intent) {
@@ -333,14 +335,14 @@ public class HandleApiCalls extends Activity {
             startActivity(new Intent(this, DeskClock.class)
                   .putExtra(DeskClock.SELECT_TAB_INTENT_EXTRA, DeskClock.TIMER_TAB_INDEX)
                   .putExtra(TimerFullScreenFragment.GOTO_SETUP_VIEW, true));
-            LogUtils.i("HandleApiCalls showing timer setup");
+            if (DEBUG) LogUtils.i("HandleApiCalls showing timer setup");
             return;
         }
 
         final long length = 1000l * intent.getIntExtra(AlarmClock.EXTRA_LENGTH, 0);
         if (length < TIMER_MIN_LENGTH || length > TIMER_MAX_LENGTH) {
             Voice.notifyFailure(this, getString(R.string.invalid_timer_length));
-            LogUtils.i("Invalid timer length requested: " + length);
+            if (DEBUG) LogUtils.i("Invalid timer length requested: " + length);
             return;
         }
         String label = getMessageFromIntent(intent);
@@ -386,7 +388,7 @@ public class HandleApiCalls extends Activity {
                     .putExtra(Timers.SCROLL_TO_TIMER_ID, timer.mTimerId));
         }
         Voice.notifySuccess(this, getString(R.string.timer_created));
-        LogUtils.i("HandleApiCalls timer created: %s", timer);
+        if (DEBUG) LogUtils.i("HandleApiCalls timer created: %s", timer);
     }
 
     private void setupInstance(AlarmInstance instance, boolean skipUi) {

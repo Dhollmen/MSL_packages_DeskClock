@@ -28,6 +28,8 @@ public class Cities {
     public static final String WORLDCLOCK_UPDATE_INTENT = "com.android.deskclock.worldclock.update";
     private static final String NUMBER_OF_CITIES = "number_of_cities";
 
+    private static final boolean DEBUG = false;
+
     public static void saveCitiesToSharedPrefs(
             SharedPreferences prefs, HashMap<String, CityObj> cities) {
         SharedPreferences.Editor editor = prefs.edit();
@@ -59,14 +61,16 @@ public class Cities {
 
     private static void dumpCities(SharedPreferences prefs, String title) {
         int size = prefs.getInt(NUMBER_OF_CITIES, -1);
-        Log.d("Cities", "Selected Cities List " + title);
-        Log.d("Cities", "Number of cities " + size);
+        if (DEBUG) Log.d("Cities", "Selected Cities List " + title);
+        if (DEBUG) Log.d("Cities", "Number of cities " + size);
         HashMap<String, CityObj> c = new HashMap<String, CityObj>();
         if (size > 0) {
             for (int i = 0; i < size; i++) {
                 CityObj o = new CityObj(prefs, i);
-                if (o.mCityName != null && o.mTimeZone != null) {
-                    Log.d("Cities", "Name " + o.mCityName + " tz " + o.mTimeZone);
+                if (DEBUG) {
+                    if (o.mCityName != null && o.mTimeZone != null) {
+                        Log.d("Cities", "Name " + o.mCityName + " tz " + o.mTimeZone);
+                    }
                 }
             }
         }

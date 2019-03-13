@@ -71,6 +71,8 @@ import java.util.LinkedList;
 public class TimerFullScreenFragment extends DeskClockFragment
         implements OnClickListener, OnSharedPreferenceChangeListener {
 
+    public final static boolean DEBUG = false;
+
     private static final String TAG = "TimerFragment1";
     private static final String KEY_ENTRY_STATE = "entry_state";
     public static final String GOTO_SETUP_VIEW = "deskclock.timers.gotosetup";
@@ -378,7 +380,7 @@ public class TimerFullScreenFragment extends DeskClockFragment
                 try {
                     mOnEmptyListListener = (OnEmptyListListener) getActivity();
                 } catch (ClassCastException e) {
-                    Log.wtf(TAG, getActivity().toString() + " must implement OnEmptyListListener");
+                    if (DEBUG) Log.wtf(TAG, getActivity().toString() + " must implement OnEmptyListListener");
                 }
             }
         }
@@ -840,7 +842,7 @@ public class TimerFullScreenFragment extends DeskClockFragment
 
     private void updateTimersState(TimerObj t, String action) {
         if (Timers.DELETE_TIMER.equals(action)) {
-            LogUtils.e("~~ update timer state");
+            if (DEBUG) LogUtils.e("~~ update timer state");
             t.deleteFromSharedPref(mPrefs);
         } else {
             t.writeToSharedPref(mPrefs);

@@ -309,7 +309,7 @@ public class StopwatchFragment extends DeskClockFragment
                 acquireWakeLock();
                 break;
             default:
-                LogUtils.wtf("Illegal state " + mState
+                if (DEBUG) LogUtils.wtf("Illegal state " + mState
                         + " while pressing the right stopwatch button");
                 break;
         }
@@ -574,7 +574,7 @@ public class StopwatchFragment extends DeskClockFragment
         try {
             context.startActivity(launchIntent);
         } catch (ActivityNotFoundException e) {
-            LogUtils.e("No compatible receiver is found");
+            if (DEBUG) LogUtils.e("No compatible receiver is found");
         }
     }
 
@@ -589,7 +589,7 @@ public class StopwatchFragment extends DeskClockFragment
         long prevLapElapsedTime = 0;
         for (int lap_i = numLaps - 1; lap_i >= 0; lap_i--) {
             long lap = input[lap_i];
-            LogUtils.v("lap " + lap_i + ": " + lap);
+            if (DEBUG) LogUtils.v("lap " + lap_i + ": " + lap);
             output[lap_i] = lap - prevLapElapsedTime;
             prevLapElapsedTime = lap;
         }
@@ -865,7 +865,7 @@ public class StopwatchFragment extends DeskClockFragment
                 break;
             default:
                 // Happens in monkey tests
-                LogUtils.i("Illegal state " + mState + " while pressing the left stopwatch button");
+                if (DEBUG) LogUtils.i("Illegal state " + mState + " while pressing the left stopwatch button");
                 break;
         }
     }

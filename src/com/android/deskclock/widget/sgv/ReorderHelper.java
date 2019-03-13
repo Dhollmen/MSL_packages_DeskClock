@@ -19,7 +19,8 @@ import com.android.deskclock.widget.sgv.StaggeredGridView.ReorderListener;
 public final class ReorderHelper {
 
     private static final String TAG = "DeskClock";
-
+    private static final boolean DEBUG = false;
+    
     /**
      * Constant to indicate an unsupported reordering position.
      */
@@ -64,7 +65,7 @@ public final class ReorderHelper {
         if (mCurrentDraggedOverChild != null) {
             reorderTarget = getReorderableChildAtCoordinate(p);
         } else {
-            Log.w(TAG, "Current dragged over child does not exist");
+            if (DEBUG) Log.w(TAG, "Current dragged over child does not exist");
         }
 
         // If reorder target is null, the drag coordinate is not over any
@@ -125,7 +126,7 @@ public final class ReorderHelper {
         if (mCurrentDraggedOverChild != null) {
             reorderTarget = getReorderableChildAtCoordinate(p);
         } else {
-            Log.w(TAG, "Current dragged over child does not exist");
+            if (DEBUG) Log.w(TAG, "Current dragged over child does not exist");
         }
 
         // If reorder target is null, the drag coordinate is not over any

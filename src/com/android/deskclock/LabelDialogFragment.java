@@ -40,6 +40,8 @@ import com.android.deskclock.timer.TimerObj;
  */
 public class LabelDialogFragment extends DialogFragment {
 
+    private final static boolean DEBUG = false;
+
     private static final String KEY_LABEL = "label";
     private static final String KEY_ALARM = "alarm";
     private static final String KEY_TIMER = "timer";
@@ -146,7 +148,7 @@ public class LabelDialogFragment extends DialogFragment {
         } else if (timer != null) {
             set(timer, tag, label);
         } else {
-            LogUtils.e("No alarm or timer available.");
+            if (DEBUG) LogUtils.e("No alarm or timer available.");
         }
     }
 
@@ -156,7 +158,7 @@ public class LabelDialogFragment extends DialogFragment {
         if (activity instanceof AlarmLabelDialogHandler) {
             ((DeskClock) activity).onDialogLabelSet(alarm, label, tag);
         } else {
-            LogUtils.e("Error! Activities that use LabelDialogFragment must implement "
+            if (DEBUG) LogUtils.e("Error! Activities that use LabelDialogFragment must implement "
                     + "AlarmLabelDialogHandler");
         }
         dismiss();
@@ -168,7 +170,7 @@ public class LabelDialogFragment extends DialogFragment {
         if (activity instanceof TimerLabelDialogHandler){
             ((DeskClock) activity).onDialogLabelSet(timer, label, tag);
         } else {
-            LogUtils.e("Error! Activities that use LabelDialogFragment must implement "
+            if (DEBUG) LogUtils.e("Error! Activities that use LabelDialogFragment must implement "
                     + "AlarmLabelDialogHandler or TimerLabelDialogHandler");
         }
         dismiss();

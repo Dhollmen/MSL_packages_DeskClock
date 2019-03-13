@@ -35,6 +35,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public final class AlarmInstance implements ClockContract.InstancesColumns {
+
+    private final static boolean DEBUG = false;
+
     /**
      * Offset from alarm time to show low priority notification
      */
@@ -250,7 +253,7 @@ public final class AlarmInstance implements ClockContract.InstancesColumns {
         String dupSelector = AlarmInstance.ALARM_ID + " = " + instance.mAlarmId;
         for (AlarmInstance otherInstances : getInstances(contentResolver, dupSelector)) {
             if (otherInstances.getAlarmTime().equals(instance.getAlarmTime())) {
-                LogUtils.i("Detected duplicate instance in DB. Updating " + otherInstances + " to "
+                if (DEBUG) LogUtils.i("Detected duplicate instance in DB. Updating " + otherInstances + " to "
                         + instance);
                 // Copy over the new instance values and update the db
                 instance.mId = otherInstances.mId;

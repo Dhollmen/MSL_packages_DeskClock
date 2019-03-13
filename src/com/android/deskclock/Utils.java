@@ -73,6 +73,9 @@ import java.util.TimeZone;
 
 
 public class Utils {
+
+    private final static boolean DEBUG = false;
+
     private final static String PARAM_LANGUAGE_CODE = "hl";
 
     /**
@@ -194,7 +197,7 @@ public class Utils {
             } catch (NameNotFoundException e) {
                 // Cannot find the package name, so don't add in the version parameter
                 // This shouldn't happen.
-                LogUtils.wtf("Invalid package name for context " + e);
+                if (DEBUG) LogUtils.wtf("Invalid package name for context " + e);
             }
         } else {
             builder.appendQueryParameter(PARAM_VERSION, sCachedVersionCode);
@@ -623,7 +626,7 @@ public class Utils {
         int minLength = cityNames.length;
         if (cityNames.length != timezones.length || ids.length != cityNames.length) {
             minLength = Math.min(cityNames.length, Math.min(timezones.length, ids.length));
-            LogUtils.e("City lists sizes are not the same, truncating");
+            if (DEBUG) LogUtils.e("City lists sizes are not the same, truncating");
         }
         CityObj[] cities = new CityObj[minLength];
         for (int i = 0; i < cities.length; i++) {
@@ -635,7 +638,7 @@ public class Utils {
             final String index;
             final String cityName;
             if (parseString.length() <= 1 && separatorIndex >= 0) {
-                LogUtils.w("Cannot parse city name %s; skipping", parseString);
+                if (DEBUG) LogUtils.w("Cannot parse city name %s; skipping", parseString);
                 continue;
             }
             if (separatorIndex == 0) {
@@ -647,7 +650,7 @@ public class Utils {
                 // Default to using the first character as the index
                 index = parseString.substring(0, 1);
                 cityName = parseString;
-                LogUtils.e("Missing expected separator character =");
+                if (DEBUG) LogUtils.e("Missing expected separator character =");
             } else {
                  index = parseString.substring(0, separatorIndex);
                  cityName = parseString.substring(separatorIndex + 1);

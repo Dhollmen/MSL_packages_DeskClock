@@ -40,6 +40,9 @@ import com.android.deskclock.Utils;
  * drawing digits (and optional label) of the time set in {@link #setTime(long, boolean, boolean)}
  */
 public class CountingTimerView extends View {
+
+    private final static boolean DEBUG = false;
+
     private static final String TWO_DIGITS = "%02d";
     private static final String ONE_DIGIT = "%01d";
     private static final String NEG_TWO_DIGITS = "-%02d";
@@ -109,7 +112,7 @@ public class CountingTimerView extends View {
             mSpacingRatio = spacingRatio;
 
             if (TextUtils.isEmpty(allDigits)) {
-                LogUtils.wtf("Locale digits missing - using English");
+                if (DEBUG) LogUtils.wtf("Locale digits missing - using English");
                 allDigits = "0123456789";
             }
 

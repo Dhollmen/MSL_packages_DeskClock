@@ -38,6 +38,7 @@ import java.util.TimeZone;
 
 public class DigitalWidgetViewsFactory implements RemoteViewsFactory {
     private static final String TAG = "DigitalWidgetViewsFactory";
+    private static final boolean DEBUG = false;
 
     private Context mContext;
     private Resources mResources;
@@ -186,8 +187,10 @@ public class DigitalWidgetViewsFactory implements RemoteViewsFactory {
 
     @Override
     public void onCreate() {
-        if (DigitalAppWidgetService.LOGGING) {
-            Log.i(TAG, "DigitalWidget onCreate " + mId);
+        if (DEBUG) {
+            if (DigitalAppWidgetService.LOGGING) {
+                Log.i(TAG, "DigitalWidget onCreate " + mId);
+            }
         }
     }
 
@@ -202,8 +205,10 @@ public class DigitalWidgetViewsFactory implements RemoteViewsFactory {
 
     @Override
     public void onDestroy() {
-        if (DigitalAppWidgetService.LOGGING) {
-            Log.i(TAG, "DigitalWidget onDestroy " + mId);
+        if (DEBUG) {
+            if (DigitalAppWidgetService.LOGGING) {
+                Log.i(TAG, "DigitalWidget onDestroy " + mId);
+            }
         }
     }
 }

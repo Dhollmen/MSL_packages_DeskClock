@@ -16,6 +16,8 @@ import java.lang.reflect.Field;
  */
 public class NumberPickerCompat extends NumberPicker {
 
+    private final static boolean DEBUG = false;
+
     private static Field sSelectionDivider;
     private static boolean sTrySelectionDivider = true;
 
@@ -60,7 +62,7 @@ public class NumberPickerCompat extends NumberPicker {
                     selectionDivider.setTint(color);
                 }
             } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
-                LogUtils.e("Unable to set selection divider", e);
+                if (DEBUG) LogUtils.e("Unable to set selection divider", e);
                 sTrySelectionDivider = false;
             }
         }

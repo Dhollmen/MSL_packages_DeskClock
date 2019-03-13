@@ -364,7 +364,7 @@ public class DeskClock extends BaseActivity
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(SettingsActivity.KEY_HOME_TZ, homeTimeZone);
         editor.apply();
-        Log.v(LOG_TAG, "Setting home time zone to " + homeTimeZone);
+        if (DEBUG) Log.v(LOG_TAG, "Setting home time zone to " + homeTimeZone);
     }
 
     public void registerPageChangedListener(DeskClockFragment frag) {
@@ -545,7 +545,7 @@ public class DeskClock extends BaseActivity
         public void registerPageChangedListener(DeskClockFragment frag) {
             String tag = frag.getTag();
             if (mFragmentTags.contains(tag)) {
-                Log.wtf(LOG_TAG, "Trying to add an existing fragment " + tag);
+                if (DEBUG) Log.wtf(LOG_TAG, "Trying to add an existing fragment " + tag);
             } else {
                 mFragmentTags.add(frag.getTag());
             }

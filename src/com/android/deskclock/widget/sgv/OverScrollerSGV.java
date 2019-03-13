@@ -23,6 +23,7 @@ import android.view.ViewConfiguration;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 
+
 /**
  * Temporarily copied from the framework so that StaggeredGridView can properly show the bounce at
  * the end of flings. See TODO and b/8252293 for more info.
@@ -41,6 +42,8 @@ public class OverScrollerSGV {
     private Interpolator mInterpolator;
 
     private final boolean mFlywheel;
+
+    private static final boolean DEBUG = false;
 
     private static final int DEFAULT_DURATION = 250;
     private static final int SCROLL_MODE = 0;
@@ -817,7 +820,8 @@ public class OverScrollerSGV {
 
         private void startAfterEdge(int start, int min, int max, int velocity) {
             if (start > min && start < max) {
-                Log.e("OverScroller", "startAfterEdge called from a valid position");
+                if (DEBUG)
+                    Log.e("OverScroller", "startAfterEdge called from a valid position");
                 mFinished = true;
                 return;
             }

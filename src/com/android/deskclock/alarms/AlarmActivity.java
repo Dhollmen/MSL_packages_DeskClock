@@ -70,6 +70,8 @@ import com.android.deskclock.widget.CircleView;
 public class AlarmActivity extends AppCompatActivity
         implements View.OnClickListener, View.OnTouchListener {
 
+    private final static boolean DEBUG = false;
+
     private static final String LOGTAG = AlarmActivity.class.getSimpleName();
 
     private static final String POWER_OFF_ALARM = "powerOffAlarm";
@@ -108,12 +110,12 @@ public class AlarmActivity extends AppCompatActivity
         public void handleMessage(Message msg) {
             switch(msg.what) {
                 case SHUTDOWN_ALARM_VIEW:
-                    LogUtils.v(LOGTAG, "SHUTDOWN_ALARM_VIEW finish before sleep 500ms");
+                    if (DEBUG) LogUtils.v(LOGTAG, "SHUTDOWN_ALARM_VIEW finish before sleep 500ms");
                     finish();
                     break;
 
                 case SHUTDOWN_POWER_OFF:
-                    LogUtils.v(LOGTAG, "SHUTDOWN_POWER_OFF directly power off");
+                    if (DEBUG) LogUtils.v(LOGTAG, "SHUTDOWN_POWER_OFF directly power off");
                     powerOff();
                     break;
 
@@ -127,7 +129,7 @@ public class AlarmActivity extends AppCompatActivity
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-            LogUtils.v(LOGTAG, "Received broadcast: %s", action);
+            if (DEBUG) LogUtils.v(LOGTAG, "Received broadcast: %s", action);
 
             if (!mAlarmHandled) {
                 switch (action) {
@@ -143,11 +145,11 @@ public class AlarmActivity extends AppCompatActivity
                         }
                         break;
                     default:
-                        LogUtils.i(LOGTAG, "Unknown broadcast: %s", action);
+                        if (DEBUG) LogUtils.i(LOGTAG, "Unknown broadcast: %s", action);
                         break;
                 }
             } else {
-                LogUtils.v(LOGTAG, "Ignored broadcast: %s", action);
+                if (DEBUG) LogUtils.v(LOGTAG, "Ignored broadcast: %s", action);
             }
         }
     };
@@ -155,12 +157,12 @@ public class AlarmActivity extends AppCompatActivity
     private final ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            LogUtils.i("Finished binding to AlarmService");
+            if (DEBUG) LogUtils.i("Finished binding to AlarmService");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            LogUtils.i("Disconnected from AlarmService");
+            if (DEBUG) LogUtils.i("Disconnected from AlarmService");
         }
     };
 
@@ -214,16 +216,16 @@ public class AlarmActivity extends AppCompatActivity
 
         if (mAlarmInstance == null) {
             // The alarm was deleted before the activity got created, so just finish()
-            LogUtils.e(LOGTAG, "Error displaying alarm for intent: %s", getIntent());
+            if (DEBUG) LogUtils.e(LOGTAG, "Error displaying alarm for intent: %s", getIntent());
             finish();
             return;
         } else if (!mIsPowerOffAlarm && mAlarmInstance.mAlarmState != AlarmInstance.FIRED_STATE) {
-            LogUtils.i(LOGTAG, "Skip displaying alarm for instance: %s", mAlarmInstance);
+            if (DEBUG) LogUtils.i(LOGTAG, "Skip displaying alarm for instance: %s", mAlarmInstance);
             finish();
             return;
         }
 
-        LogUtils.i(LOGTAG, "Displaying alarm for instance: %s", mAlarmInstance);
+        if (DEBUG) LogUtils.i(LOGTAG, "Displaying alarm for instance: %s", mAlarmInstance);
 
         // Get the volume/camera button behavior setting
         mVolumeBehavior = PreferenceManager.getDefaultSharedPreferences(this)
@@ -334,14 +336,14 @@ public class AlarmActivity extends AppCompatActivity
             mAlarmInstance = AlarmInstance.getInstance(getContentResolver(), instanceId);
 
             if (mAlarmInstance == null) {
-                LogUtils.i(LOGTAG, "No alarm instance for instanceId: %d", instanceId);
+                if (DEBUG) LogUtils.i(LOGTAG, "No alarm instance for instanceId: %d", instanceId);
                 finish();
                 return;
             }
 
             // Verify that the alarm is still firing before showing the activity
             if (!mIsPowerOffAlarm && mAlarmInstance.mAlarmState != AlarmInstance.FIRED_STATE) {
-                LogUtils.i(LOGTAG, "Skip displaying alarm for instance: %s", mAlarmInstance);
+                if (DEBUG) LogUtils.i(LOGTAG, "Skip displaying alarm for instance: %s", mAlarmInstance);
                 finish();
                 return;
             }
@@ -382,7 +384,7 @@ public class AlarmActivity extends AppCompatActivity
                 if (!mAlarmHandled) {
                     Settings.System.putInt(mContext.getContentResolver(), POWER_OFF_ALARM_MODE, 0);
                     mIsPowerOffAlarm = false;
-                    LogUtils.d(LOGTAG, "onDestroy setSnoozeState = " + mAlarmInstance);
+                    if (DEBUG) LogUtils.d(LOGTAG, "onDestroy setSnoozeState = " + mAlarmInstance);
                     AlarmStateManager.setSnoozeState(this, mAlarmInstance, false );
                 }
             }
@@ -393,7 +395,7 @@ public class AlarmActivity extends AppCompatActivity
     @Override
     public boolean dispatchKeyEvent(@NonNull KeyEvent keyEvent) {
         // Do this in dispatch to intercept a few of the system keys.
-        LogUtils.v(LOGTAG, "dispatchKeyEvent: %s", keyEvent);
+        if (DEBUG) LogUtils.v(LOGTAG, "dispatchKeyEvent: %s", keyEvent);
 
         switch (keyEvent.getKeyCode()) {
             // Volume keys and camera keys dismiss the alarm.
@@ -429,10 +431,10 @@ public class AlarmActivity extends AppCompatActivity
     @Override
     public void onClick(View view) {
         if (mAlarmHandled) {
-            LogUtils.v(LOGTAG, "onClick ignored: %s", view);
+            if (DEBUG) LogUtils.v(LOGTAG, "onClick ignored: %s", view);
             return;
         }
-        LogUtils.v(LOGTAG, "onClick: %s", view);
+        if (DEBUG) LogUtils.v(LOGTAG, "onClick: %s", view);
 
         // If in accessibility mode, allow snooze/dismiss by double tapping on respective icons.
         if (mAccessibilityManager != null && mAccessibilityManager.isTouchExplorationEnabled()) {
@@ -454,7 +456,7 @@ public class AlarmActivity extends AppCompatActivity
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         if (mAlarmHandled) {
-            LogUtils.v(LOGTAG, "onTouch ignored: %s", motionEvent);
+            if (DEBUG) LogUtils.v(LOGTAG, "onTouch ignored: %s", motionEvent);
             return false;
         }
 
@@ -479,13 +481,13 @@ public class AlarmActivity extends AppCompatActivity
 
         switch (motionEvent.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                LogUtils.v(LOGTAG, "onTouch started: %s", motionEvent);
+                if (DEBUG) LogUtils.v(LOGTAG, "onTouch started: %s", motionEvent);
 
                 // Stop the pulse, allowing the last pulse to finish.
                 mPulseAnimator.setRepeatCount(0);
                 break;
             case MotionEvent.ACTION_UP:
-                LogUtils.v(LOGTAG, "onTouch ended: %s", motionEvent);
+                if (DEBUG) LogUtils.v(LOGTAG, "onTouch ended: %s", motionEvent);
 
                 if (snoozeFraction == 1.0f) {
                     snooze();
@@ -564,7 +566,7 @@ public class AlarmActivity extends AppCompatActivity
         mIsSoonze = true;
 
         mAlarmHandled = true;
-        LogUtils.v(LOGTAG, "Snoozed: %s", mAlarmInstance);
+        if (DEBUG) LogUtils.v(LOGTAG, "Snoozed: %s", mAlarmInstance);
 
         final int accentColor = Utils.obtainStyledColor(this, R.attr.colorAccent, Color.RED);
         setAnimatedFractions(1.0f /* snoozeFraction */, 0.0f /* dismissFraction */);
@@ -591,7 +593,7 @@ public class AlarmActivity extends AppCompatActivity
      */
     private void dismiss() {
         mAlarmHandled = true;
-        LogUtils.v(LOGTAG, "Dismissed: %s", mAlarmInstance);
+        if (DEBUG) LogUtils.v(LOGTAG, "Dismissed: %s", mAlarmInstance);
 
         setAnimatedFractions(0.0f /* snoozeFraction */, 1.0f /* dismissFraction */);
 

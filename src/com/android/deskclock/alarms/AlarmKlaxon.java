@@ -29,6 +29,8 @@ import com.android.deskclock.provider.AlarmInstance;
  * Manages playing ringtone and vibrating the device.
  */
 public final class AlarmKlaxon {
+    private final static boolean DEBUG = false;
+
     private static final long[] sVibratePattern = {500, 500};
 
     private static boolean sStarted = false;
@@ -37,7 +39,7 @@ public final class AlarmKlaxon {
     private AlarmKlaxon() {}
 
     public static void stop(Context context) {
-        LogUtils.v("AlarmKlaxon.stop()");
+        if (DEBUG) LogUtils.v("AlarmKlaxon.stop()");
 
         if (sStarted) {
             sStarted = false;
@@ -47,7 +49,7 @@ public final class AlarmKlaxon {
     }
 
     public static void start(Context context, AlarmInstance instance) {
-        LogUtils.v("AlarmKlaxon.start()");
+        if (DEBUG) LogUtils.v("AlarmKlaxon.start()");
         // Make sure we are stopped before starting
         stop(context);
 

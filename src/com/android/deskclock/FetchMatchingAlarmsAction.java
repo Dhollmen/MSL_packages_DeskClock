@@ -40,6 +40,8 @@ import java.util.List;
  */
 class FetchMatchingAlarmsAction implements Runnable {
 
+    private final static boolean DEBUG = false;
+
     private final Context mContext;
     private final List<Alarm> mAlarms;
     private final Intent mIntent;
@@ -160,7 +162,7 @@ class FetchMatchingAlarmsAction implements Runnable {
     }
 
     private void notifyFailureAndLog(String reason, Activity activity) {
-        LogUtils.e(reason);
+        if (DEBUG) LogUtils.e(reason);
         Voice.notifyFailure(activity, reason);
     }
 }

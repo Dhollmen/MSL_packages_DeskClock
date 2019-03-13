@@ -63,7 +63,7 @@ public class ScreensaverActivity extends AppCompatActivity {
     private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            LogUtils.v(TAG, "ScreensaverActivity onReceive, action: " + intent.getAction());
+            if (DEBUG) LogUtils.v(TAG, "ScreensaverActivity onReceive, action: " + intent.getAction());
 
             boolean changed = intent.getAction().equals(Intent.ACTION_TIME_CHANGED)
                     || intent.getAction().equals(Intent.ACTION_TIMEZONE_CHANGED);
@@ -109,7 +109,7 @@ public class ScreensaverActivity extends AppCompatActivity {
     };
 
     public ScreensaverActivity() {
-        LogUtils.d(TAG, "Screensaver allocated");
+        if (DEBUG) LogUtils.d(TAG, "Screensaver allocated");
         mMoveSaverRunnable = new ScreensaverMoveSaverRunnable(mHandler);
     }
 
@@ -169,7 +169,7 @@ public class ScreensaverActivity extends AppCompatActivity {
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        LogUtils.d(TAG, "Screensaver configuration changed");
+        if (DEBUG) LogUtils.d(TAG, "Screensaver configuration changed");
         super.onConfigurationChanged(newConfig);
         mHandler.removeCallbacks(mMoveSaverRunnable);
         layoutClockSaver();
